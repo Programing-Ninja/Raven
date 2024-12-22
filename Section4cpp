@@ -1,0 +1,95 @@
+#include <iostream>
+#include <utility>
+
+template <typename T>
+class UniquePtr {
+private:
+    T* ptr; // Pointer to the managed object
+
+public:
+    // Constructor
+    explicit UniquePtr(T* p = nullptr) : ptr(p) {}
+
+    // Destructor
+    ~UniquePtr() {
+        delete ptr;
+    }
+
+    // Delete copy constructor and copy assignment operator
+    UniquePtr(const UniquePtr&) = delete;
+    UniquePtr& operator=(const UniquePtr&) = delete;
+
+    // Move constructor
+    UniquePtr(UniquePtr&& other) noexcept : ptr(other.ptr) {
+        other.ptr = nullptr;
+    }
+
+    // Move assignment operator
+    UniquePtr& operator=(UniquePtr&& other) noexcept {
+        if (this != &other) {
+            delete ptr; // Delete current resource
+            ptr = other.ptr;
+            other.ptr = nullptr;
+        }
+        return *this;
+    }
+
+    // Access the managed object
+    T* get() const {
+        return ptr;
+    }
+
+    // Release ownership of the managed object
+    T* release() {
+        T* oldPtr = ptr;
+        ptr = nullptr;
+        return oldPtr;
+    }
+
+    // Replace the managed object
+    void reset(T* newPtr = nullptr) {
+        delete ptr;
+        ptr = newPtr;
+    }
+
+    // Dereference operator
+    T& operator*() const {
+        return *ptr;
+    }
+
+    // Arrow operator
+    T* operator->() const {
+        return ptr;
+    }
+
+    // Check if there is a managed object
+    explicit operator bool() const {
+        return ptr != nullptr;
+    }
+};
+
+/*
+//Example usage
+int main() {
+    UniquePtr<int> uptr1(new int(42));
+    std::cout << "Value: " << *uptr1 << "\n";
+
+    // Transfer ownership
+    UniquePtr<int> uptr2 = std::move(uptr1);
+    if (!uptr1) {
+        std::cout << "uptr1 is now empty.\n";
+    }
+
+    std::cout << "Value: " << *uptr2 << "\n";
+
+    // Reset the managed object
+    uptr2.reset(new int(100));
+    std::cout << "New Value: " << *uptr2 << "\n";
+
+    // Release ownership
+    int* rawPtr = uptr2.release();
+    std::cout << "Released Value: " << *rawPtr << "\n";
+    delete rawPtr;
+
+    return 0;
+} */

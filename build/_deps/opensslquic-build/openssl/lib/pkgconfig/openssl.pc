@@ -1,0 +1,9 @@
+prefix=/home/harshvardhan/Project/Raven/build/_deps/opensslquic-build/openssl
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: OpenSSL
+Description: Secure Sockets Layer and cryptography libraries and tools
+Version: 1.1.1w+quic
+Requires: libssl libcrypto
